@@ -1,0 +1,20 @@
+Modules to Make
+
+1) Project File Data Extractor.
+    Extracts the data into 4 "Tables": Properties, Tasks, Task Relastions, Resources
+    Accepts File Path and returns Project Schedule Class consisting of the 4 tables.
+
+2) Validation Module.
+    Take the existing Module and remake it to work with the  4 table design.
+
+3) Report Builder
+    Take the existing Report Builder and adapt.
+
+4) Delivery Method
+    Writes file to directory
+
+5) Job Runner
+    runs validation job.
+
+6) User Interface
+    rich user interface. Displays files in folder and asks which one or all should be run.

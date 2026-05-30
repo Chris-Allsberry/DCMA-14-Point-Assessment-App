@@ -1,15 +1,17 @@
 [project]
-name = "dcma-14-point-assessor"
+name = "dcma14pointassessor"
 version = "0.0.1"
 dependencies = [
     "JPype1",
-    "ipykernel", # For Testing
-    "mpxj"
+    "mpxj",
+    "rich",
+    "ipykernel", # testing
+    "load-dotenv"
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["dcma-14-point-assessor"]
+include = ["dcma14pointassessor"]
 
 [project.scripts]
-dcma14 = "dcma-14-point-assessor:main"
+dcma14 = "dcma14pointassessor:main"
