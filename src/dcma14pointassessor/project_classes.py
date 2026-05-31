@@ -4,10 +4,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class ProjectBase:
     def to_dict(self):
-        d = {}
-        for k,v in self.__dict__.items():
-            d[k] = v
-        return d
+        return {k:v for k,v in self.__dict__.items()}
 
 
 @dataclass(frozen=True)
