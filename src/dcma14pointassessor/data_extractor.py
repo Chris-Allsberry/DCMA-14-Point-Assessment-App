@@ -7,7 +7,7 @@ import jpype
 import jpype.imports
 import mpxj
 
-from .project_classes import ProjectData, ProjectProperties, Task, TaskRelation, ResourceAssignment
+from .project_classes import ProjectData, ProjectProperties, Task, TaskRelation, ResourceAssignment, Duration
 
 if not jpype.isJVMStarted():
     jpype.startJVM("-Dlog4j2.loggerContextFactory=org.apache.logging.log4j.simple.SimpleLoggerContextFactory") # Move this to the start of the app
@@ -72,14 +72,14 @@ class DataExtractor:
                 return float(input)
 
 
-    def __get_duration(self, input) -> dict:
+    def __get_duration(self, input) -> Duration:
         if input == None:
             return None
         else:
-            return {
-                'Value': float(input.getDuration()),
-                'Unit': str(input.getUnits().getName())
-            }
+            return Duration(
+                value=float(input.getDuration()),
+                unit=str(input.getUnits().getName())
+            )
 
 
     def __extract_project_properties(self) -> ProjectProperties:
@@ -194,4 +194,4 @@ if __name__ == '__main__':
         data = file.read()
     dx = DataExtractor(filepath_or_bytes=data)
     data = dx.extract_data()
-    print(data.tasks)
+    print(data.tasks[0])

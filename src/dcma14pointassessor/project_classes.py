@@ -49,6 +49,13 @@ class Task(ProjectBase):
     outline_level: int
     outline_number: str
 
+    def to_error(self):
+        return {
+            'task_id': self.guid,
+            'task_index': self.id,
+            'task_name': self.name
+        }
+
 
 @dataclass(frozen=True)
 class TaskRelation(ProjectBase):
