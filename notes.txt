@@ -18,3 +18,7 @@ Modules to Make
 
 6) User Interface
     rich user interface. Displays files in folder and asks which one or all should be run.
+
+
+https://tensix.com/what-is-the-dcma-14-point-assessment/
+https://www.deltek.com/en/project-and-portfolio-management/project-scheduling/dcma-14-point-assessment

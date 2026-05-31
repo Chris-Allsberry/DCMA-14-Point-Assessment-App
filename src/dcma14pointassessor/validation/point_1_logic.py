@@ -1,12 +1,12 @@
 from operator import attrgetter
 
 from .validation_classes import ValidationInfo, ValidationError, ValidationResult
-from ..project_classes import ProjectData, Task
+from ..data_extractor.project_classes import ProjectData, Task
 
 class Check_1_Logic:
     def __init__(self, project:ProjectData):
+        self.error_list = []
         self.project = project
-        self.tasks = list(filter(lambda x: x.id != 0, self.project.tasks))
         self.info = ValidationInfo(
             id=1,
             name='Missing Logic',
@@ -17,11 +17,11 @@ class Check_1_Logic:
                 "(which should only have a predecessor). Milestones should also "\
                 "only have predecessors and should not be used to drive activities."
         )
+        self.non_0_tasks = list(filter(lambda x: x.id != 0, self.project.tasks))
         self.first_tasks = self.__find_first_non_summary_task()
-        self.error_list = []
 
     def __find_first_non_summary_task(self) -> list[Task]:
-        non_summary_tasks = list(filter(lambda x: x.summary is False, self.tasks))
+        non_summary_tasks = list(filter(lambda x: x.summary is False, self.non_0_tasks))
         first_date = min(non_summary_tasks, key=attrgetter('start')).start
         first_tasks = list(filter(lambda x: x.start == first_date, non_summary_tasks))
         return first_tasks
@@ -38,7 +38,7 @@ class Check_1_Logic:
                     )
 
     def __check_logic(self):
-        for task in self.tasks:
+        for task in self.non_0_tasks:
             preds = len(
                 list(filter(lambda x: x.successor == task.guid, self.project.task_relations))
             )
@@ -97,9 +97,9 @@ class Check_1_Logic:
                         )
                     )
 
-    def __create_summary(self):
+    def __create_summary(self) -> ValidationResult:
         bad_count = len(self.error_list)
-        total_count = len(self.tasks)
+        total_count = len(self.non_0_tasks)
         if total_count == 0:
             result = "N/A"
             summary = "You have 0 Tasks in this project schedule."
@@ -120,5 +120,4 @@ class Check_1_Logic:
     def run(self) -> ValidationResult:
         self.__multiple_first_tasks()
         self.__check_logic()
-        result = self.__create_summary()
-        return result
+        return self.__create_summary()

@@ -1,5 +1,5 @@
 import datetime as dt
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class ProjectBase:
@@ -11,6 +11,14 @@ class ProjectBase:
 class Duration(ProjectBase):
     value: float
     unit: str
+
+    def to_days(self):
+        if self.unit == 'mo':
+            return self.value * 21
+        elif self.unit == 'w':
+            return self.value * 5
+        else:
+            return self.value
 
 
 @dataclass(frozen=True)
@@ -48,6 +56,10 @@ class Task(ProjectBase):
     wbs: str
     outline_level: int
     outline_number: str
+    start_slack: Duration
+    finish_slack: Duration
+    free_slack: Duration
+    total_slack: Duration
 
     def to_error(self):
         return {
@@ -55,6 +67,7 @@ class Task(ProjectBase):
             'task_index': self.id,
             'task_name': self.name
         }
+
 
 
 @dataclass(frozen=True)
@@ -91,3 +104,8 @@ class ProjectData:
     tasks:list[Task]
     task_relations: list[TaskRelation]
     resource_assigments: list[ResourceAssignment]
+    task_lookup: dict[str, Task] = field(init=False)
+
+    def __post_init__(self):
+        tl = {task.guid:task for task in self.tasks}
+        object.__setattr__(self,'task_lookup', tl)

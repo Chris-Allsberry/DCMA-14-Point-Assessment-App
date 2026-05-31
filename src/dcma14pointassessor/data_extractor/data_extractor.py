@@ -123,6 +123,10 @@ class DataExtractor:
                 'wbs': self.__to_string(task.getWBS()),
                 'outline_level' : self.__to_number(task.getOutlineLevel()),
                 'outline_number' : self.__to_string(task.getOutlineNumber()),
+                'start_slack': self.__get_duration(task.getStartSlack()),
+                'finish_slack': self.__get_duration(task.getFinishSlack()),
+                'free_slack': self.__get_duration(task.getFreeSlack()),
+                'total_slack': self.__get_duration(task.getTotalSlack()),
             }
             new_task = Task(**data)
             output.append(new_task)
@@ -185,13 +189,3 @@ class DataExtractor:
             task_relations=task_relations,
             resource_assigments=resource_assignments
         )
-
-
-
-if __name__ == '__main__':
-    path = os.path.join('.', 'TEMP', 'project_files', 'Test Project 01.pod')
-    with open(path, 'rb') as file:
-        data = file.read()
-    dx = DataExtractor(filepath_or_bytes=data)
-    data = dx.extract_data()
-    print(data.tasks[0])
