@@ -1,15 +1,14 @@
 
 from .data_extractor import DataExtractor
-from .validation.point_1_logic import Check_1_Logic
-from .validation.point_4_relationship_types import Check_4_RelationshipType
 import os
+from .validation.point_7_negative_float import Check_7_NegativeFloat
 
 if __name__ == '__main__':
     path = os.path.join('.', 'TEMP', 'project_files', 'CAD Template.mpp')
     de = DataExtractor(path)
     data = de.extract_data()
-    v = Check_4_RelationshipType(data)
+    v = Check_7_NegativeFloat(data)
     result = v.run()
-    for r in data.tasks:
-        print(r.total_slack, r.total_slack.to_days())
-    # print(result.result, result.summary)
+    print(result)
+    for r in result.data:
+        print(r)
