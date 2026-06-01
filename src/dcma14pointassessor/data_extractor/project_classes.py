@@ -103,7 +103,7 @@ class ProjectData:
     project_properties: ProjectProperties
     tasks:list[Task]
     task_relations: list[TaskRelation]
-    resource_assigments: list[ResourceAssignment]
+    resource_assignments: list[ResourceAssignment]
     task_lookup: dict[str, Task] = field(init=False)
 
     def __post_init__(self):

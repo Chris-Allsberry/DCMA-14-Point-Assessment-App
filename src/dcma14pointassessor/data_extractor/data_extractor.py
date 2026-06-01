@@ -187,5 +187,5 @@ class DataExtractor:
             project_properties=project_properties,
             tasks=tasks,
             task_relations=task_relations,
-            resource_assigments=resource_assignments
+            resource_assignments=resource_assignments
         )
