@@ -5,6 +5,7 @@ dependencies = [
     "JPype1",
     "mpxj",
     "rich",
+    "openpyxl",
     "ipykernel", # testing
     "load-dotenv"
 ]

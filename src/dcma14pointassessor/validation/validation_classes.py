@@ -28,3 +28,20 @@ class ValidationResult(ValidationBase):
     result: str
     summary: str
     data: list[ValidationError]
+
+    def to_summary_dict(self):
+        return {
+            'id': self.validation_info.id,
+            'name': self.validation_info.name,
+            'desc': self.validation_info.description,
+            'type': self.validation_info.type,
+            'result': self.result,
+            'summary': self.summary
+        }
+
+    def create_details_list(self): # Work on this!!
+        output = []
+        for i in self.data:
+            new = {
+
+            }
