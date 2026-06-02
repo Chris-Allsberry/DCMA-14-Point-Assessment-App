@@ -38,7 +38,7 @@ class Check_4_RelationshipType:
                 result = 'Fail'
             else:
                 result = 'Pass'
-            summary = f"You have {percentage} ({bad} of {total}) "\
+            summary = f"You have {format(percentage, '0.2%')} ({bad} of {total}) "\
                 "of Task Relations as Non Finish-to-Start."
         return ValidationResult(
             validation_info=self.info,

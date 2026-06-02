@@ -31,17 +31,25 @@ class ValidationResult(ValidationBase):
 
     def to_summary_dict(self):
         return {
-            'id': self.validation_info.id,
-            'name': self.validation_info.name,
-            'desc': self.validation_info.description,
-            'type': self.validation_info.type,
-            'result': self.result,
-            'summary': self.summary
+            'Result': self.result,
+            'Id': self.validation_info.id,
+            'Name': self.validation_info.name,
+            'Type': self.validation_info.type,
+            'Description': self.validation_info.description,
+            'Summary': self.summary
         }
 
-    def create_details_list(self): # Work on this!!
+    def create_details_list(self):
         output = []
         for i in self.data:
             new = {
-
+                'Id': self.validation_info.id,
+                'Name': self.validation_info.name,
+                'Type': self.validation_info.type,
+                'Task GUID': i.task_id,
+                'Task Index': i.task_index,
+                'Task Name': i.task_name,
+                'Error': i.error
             }
+            output.append(new)
+        return output

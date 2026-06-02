@@ -33,12 +33,13 @@ class Check_3_Lags:
     def __create_summary(self) -> ValidationResult:
         bad = len(self.error_list)
         total = len(self.project.task_relations)
+        percentage = bad / total
         if total > 0:
-            if bad / total > 0.05:
+            if percentage > 0.05:
                 result = "Fail"
             else:
                 result = "Pass"
-            summary = f"You have {format(bad/total,'0.2%')} ({bad} of {total}) task relationships with lags."
+            summary = f"You have {format(percentage,'0.2%')} ({bad} of {total}) task relationships with lags."
         else:
             result = "N/A"
             summary = f"You have 0 Task Relationships in this project schedule."

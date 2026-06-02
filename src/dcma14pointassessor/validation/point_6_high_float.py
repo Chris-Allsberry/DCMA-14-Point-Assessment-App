@@ -32,15 +32,16 @@ class Check_6_HighFloat:
     def __create_summary(self) -> ValidationResult:
         bad = len(self.error_list)
         total = len(self.incomplete_tasks)
+        percentage = bad / total
         if total == 0:
             result = 'N/A'
             summary = 'You have 0 Incomplete Tasks.'
         else:
-            if bad / total > .05:
+            if percentage > .05:
                 result = 'Fail'
             else:
                 result = 'Pass'
-            summary = f'You have {bad / total} of tasks with more than 44 Days of Float.'
+            summary = f'You have {format(percentage, '0.2%')} of tasks with more than 44 Days of Float.'
         return ValidationResult(
             validation_info=self.info,
             result=result,
