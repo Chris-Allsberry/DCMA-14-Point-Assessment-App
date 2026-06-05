@@ -1,5 +1,5 @@
 from io import BytesIO
-import inspect
+
 from openpyxl import Workbook
 from openpyxl.styles import (
     NamedStyle,
@@ -11,7 +11,7 @@ from openpyxl.styles import (
     Alignment,
 )
 from openpyxl.utils import get_column_letter
-from operator import methodcaller
+
 from .validation.validation_classes import ValidationResult
 
 class ReportBuilder:

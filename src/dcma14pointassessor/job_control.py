@@ -48,5 +48,5 @@ class JobControl:
         except Exception as e:
             return JobResult(
                 status=False,
-                error=traceback.extract_tb(e.__traceback__)
+                error=traceback.format_exc()
             )

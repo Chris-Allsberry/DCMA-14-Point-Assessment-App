@@ -29,11 +29,11 @@ class Check_4_RelationshipType:
     def __create_summary(self) -> ValidationResult:
         bad = len(self.error_list)
         total = len(self.project.task_relations)
-        percentage =  bad / total
         if total == 0:
             result = "N/A"
             summary = f"There are 0 Task Relationships in this project schedule."
         else:
+            percentage =  bad / total
             if percentage > .1:
                 result = 'Fail'
             else:

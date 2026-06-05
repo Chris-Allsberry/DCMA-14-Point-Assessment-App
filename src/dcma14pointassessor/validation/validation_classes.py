@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from operator import attrgetter
-
 
 @dataclass(frozen=True)
 class ValidationBase:

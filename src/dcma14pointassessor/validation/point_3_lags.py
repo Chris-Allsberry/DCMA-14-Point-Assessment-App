@@ -33,8 +33,8 @@ class Check_3_Lags:
     def __create_summary(self) -> ValidationResult:
         bad = len(self.error_list)
         total = len(self.project.task_relations)
-        percentage = bad / total
         if total > 0:
+            percentage = bad / total
             if percentage > 0.05:
                 result = "Fail"
             else:

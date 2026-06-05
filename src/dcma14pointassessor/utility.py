@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 import datetime as dt
 import os
-
 from pathlib import Path
+
 
 @dataclass(frozen=True)
 class ValidationRequest:
@@ -18,8 +18,12 @@ class ValidationRequest:
 
 class Config:
     def __init__(self):
-        data_path = os.getenv('INPUT_OUTPUT_PATH')
-        self.input_folder = os.path.join(data_path, 'input')
-        self.output_folder = os.path.join(data_path , 'output')
-        os.makedirs(self.input_folder, exist_ok=True)
-        os.makedirs(self.output_folder, exist_ok=True)
+        data_path:Path = Path(os.getenv('INPUT_OUTPUT_PATH'))
+        # self.input_folder = os.path.join(data_path, 'input')
+        # self.output_folder = os.path.join(data_path , 'output')
+        # os.makedirs(self.input_folder, exist_ok=True)
+        # os.makedirs(self.output_folder, exist_ok=True)
+        self.input_folder:Path = data_path / 'input'
+        self.output_folder:Path = data_path / 'output'
+        self.input_folder.mkdir(parents=True, exist_ok=True)
+        self.output_folder.mkdir(parents=True, exist_ok=True)

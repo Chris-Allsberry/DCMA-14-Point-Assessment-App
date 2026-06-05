@@ -1,13 +1,17 @@
-from .utility import Config, ValidationRequest
-from .job_control import JobControl, JobResult
-from rich.console import Console
-import subprocess
-import platform
-import os
-from pathlib import Path
-from operator import attrgetter
+import datetime as dt
 from dataclasses import dataclass
+from operator import attrgetter
+import os
+import platform
+import subprocess
+import time
 from typing import Optional, Callable, Any
+
+from rich.console import Console
+
+from .art import Gallery
+from .job_control import JobControl, JobResult
+from .utility import Config, ValidationRequest
 
 @dataclass
 class ValidSelection:
@@ -24,8 +28,10 @@ class NextScreen:
 class UserInterface:
     def __init__(self):
         self.on = True
+        self.art = Gallery()
         self.config = Config()
         self.console = Console()
+        self.wait_seconds = 2
         self.file_dictionary: dict[int, os.DirEntry] = {}
 
     def __choice_validator(
@@ -36,6 +42,14 @@ class UserInterface:
             ) -> ValidSelection:
         try:
             user_choice= int(user_choice)
+            if user_choice in valid_options:
+                return ValidSelection(
+                    status=True, choice=user_choice
+                )
+            else:
+                return ValidSelection(
+                    status=False
+                )
         except Exception:
             user_choice = user_choice.lower()
         if user_choice in valid_options:
@@ -48,6 +62,13 @@ class UserInterface:
             )
         else:
             return ValidSelection(status=False)
+
+    def __time_waster(self, start:dt.datetime, finish:dt.datetime):
+        time_delta = finish - start
+        if time_delta.seconds > self.wait_seconds:
+            return
+        else:
+            time.sleep(self.wait_seconds - time_delta.seconds)
 
     def __clear_screen(self):
         command = "cls" if platform.system() == 'Windows' else 'clear'
@@ -63,17 +84,22 @@ class UserInterface:
 
     def __rule(self):
         self.console.rule('DCMA 14 Point Assessment')
+        self.console.print('\n')
 
     def screen_welcome(self):
         self.__clear_screen()
-        self.console.print('Welcome...')
+        self.__rule()
+        self.console.print(self.art.title1)
+        self.console.print(self.art.title2)
+        self.console.print('\n')
         self.console.input('Press Enter to Continue...')
         return NextScreen(self.screen_choose_files)
 
     def screen_quit(self):
         self.__clear_screen()
+        self.__rule()
         self.console.print('\n')
-        self.console.print('Goodbye')
+        self.console.print(self.art.goodbye)
         self.on = False
 
     def screen_choose_files(self):
@@ -82,11 +108,15 @@ class UserInterface:
             self.__clear_screen()
             self.__get_file_paths()
             self.__rule()
-            self.console.print('Select a File:\n')
-            for k,v in self.file_dictionary.items():
-                self.console.print(f'{k}: {v.name}')
-            self.console.print('\n') 
-            uc = self.console.input('Select a file by number or "q" to quit: ')
+            self.console.print(f'[bold]Files in input path ([/bold][green]{self.config.input_folder}[/green][bold]):[/bold]\n')
+            if len(self.file_dictionary) == 0:
+                self.console.print(self.art.no_files)
+                uc = self.console.input('\nLooks like there are no files here. Press "Enter" to refresh or "q" to quit: ')
+            else:
+                for k,v in self.file_dictionary.items():
+                    self.console.print(f'{k}: {v.name}')
+                self.console.print('\n') 
+                uc = self.console.input('Select a file by [green]number[/green] or enter "q" to quit: ')
             ucp = self.__choice_validator(uc, self.file_dictionary.keys())
             choice_valid = ucp.status
         if ucp.quit:
@@ -97,20 +127,28 @@ class UserInterface:
     def screen_wait(self, selection):
         self.__clear_screen()
         self.__rule()
-        self.console.print('\nPlease wait while we create the report...')
-        path = self.file_dictionary[selection]
-        vr = ValidationRequest(input_path=path.path, output_folder=self.config.output_folder)
-        jc = JobControl(vr)
-        result = jc.run()
-        return NextScreen(self.screen_display_results, result)
+        with self.console.status('\nPlease wait while we create the report...', spinner='aesthetic'):
+            start = dt.datetime.now(dt.timezone.utc)
+            path = self.file_dictionary[selection]
+            vr = ValidationRequest(input_path=path.path, output_folder=self.config.output_folder)
+            jc = JobControl(vr)
+            result = jc.run()
+            finish = dt.datetime.now(dt.timezone.utc)
+            self.__time_waster(start=start, finish=finish)
+            return NextScreen(self.screen_display_results, result)
 
     def screen_display_results(self, results: JobResult):
         choice_ok = False
         while not choice_ok:
             self.__clear_screen()
             self.__rule()
+            self.console.print('Validation Results:\n', style='bold')
             self.console.print(f"Status: {results.status}")
-            self.console.print(f"Output: {results.output}")
+            if results.status:
+                self.console.print(f"Output: {results.output}")
+            else:
+                self.console.print(results.error)
+            print('\n')
             uc = self.console.input('Would you like to validate another schedule? "y" or "n": ')
             ucp = self.__choice_validator(user_choice=uc, valid_options=['y', 'n'])
             choice_ok = ucp.status
@@ -127,13 +165,3 @@ class UserInterface:
             else:
                 next_screen = current_screen.screen()
             current_screen = next_screen
-
-
-
-
-
-if __name__ == '__main__':
-    from load_dotenv import load_dotenv
-    load_dotenv()
-    ui = UserInterface()
-    ui.run()

@@ -32,11 +32,11 @@ class Check_8_HighDuration:
     def __create_summary(self) -> ValidationResult:
         bad = len(self.error_list)
         total = self.total_non_0_tasks
-        percentage = bad / total
         if total == 0:
             result = "N/A"
             summary = "There are no tasks in the schedule."
         else:
+            percentage = bad / total
             if percentage > .05:
                 result = "Fail"
             else:
