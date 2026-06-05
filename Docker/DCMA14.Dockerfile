@@ -14,10 +14,10 @@ WORKDIR $INPUT_OUTPUT_PATH
 WORKDIR /app
 
 # Create Volume
-Volume $INPUT_OUTPUT_PATH
+VOLUME $INPUT_OUTPUT_PATH
 
 # Copy
-COPY ./src/dcma14pointassessor/* ./src/dcma14pointassessor/
+COPY ./src/dcma14pointassessor ./src/dcma14pointassessor
 COPY pyproject.toml .
 
 # Build Install Build
@@ -27,4 +27,4 @@ RUN pip install build
 RUN python3 -m build . \
     && pip install ./dist/*.whl
 
-CMD ['dcma14']
+CMD ["dcma14"]

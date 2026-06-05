@@ -10,7 +10,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["dcma14pointassessor"]
+include = ["dcma14pointassessor*"]
 
 [project.scripts]
 dcma14 = "dcma14pointassessor:main"

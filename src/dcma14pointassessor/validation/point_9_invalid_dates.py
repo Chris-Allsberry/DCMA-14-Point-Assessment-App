@@ -1,5 +1,6 @@
 from .validation_classes import ValidationInfo, ValidationError, ValidationResult
 from ..data_extractor.project_classes import ProjectData, Task
+from operator import attrgetter
 
 class Check_9_InvalidDates:
     def __init__(self, project: ProjectData):
@@ -24,6 +25,31 @@ class Check_9_InvalidDates:
 # 3) Start Date in Past w/o Actual Start
 # 4) Finish Date in Past w/o Actual Finish
 
+    def __check_status_date_exists(self) -> bool:
+        if not self.status_date:
+            zero_tasks = list(filter(lambda t: t.id == 0, self.project.tasks))
+            message = "This project doesn't have a the Status Date set."
+            try:
+                task = zero_tasks[0]
+                self.error_list.append(
+                    ValidationError(
+                        **task.to_error(),
+                        error=message
+                    )
+                )
+                return False
+            except Exception:
+                self.error_list.append(
+                    ValidationError(
+                        task_id='N/A',
+                        task_index=0,
+                        task_name='PROJECT TASK',
+                        error=message
+                    )
+                )
+                return False
+        else:
+            return True
 
     def __check_future_act_start(self, task: Task):
             if task.actual_start and task.actual_start > self.status_date:
@@ -83,11 +109,12 @@ class Check_9_InvalidDates:
         )
 
     def run(self) -> ValidationResult:
-        for task in self.project.tasks:
-            if task.id != 0:
-                self.eligible_tasks += 1
-                self.__check_start_no_act(task)
-                self.__check_finish_no_act(task)
-                self.__check_future_act_start(task)
-                self.__check_future_act_finish(task)
+        if self.__check_status_date_exists():
+            for task in self.project.tasks:
+                if task.id != 0:
+                    self.eligible_tasks += 1
+                    self.__check_start_no_act(task)
+                    self.__check_finish_no_act(task)
+                    self.__check_future_act_start(task)
+                    self.__check_future_act_finish(task)
         return self.__create_summary()
